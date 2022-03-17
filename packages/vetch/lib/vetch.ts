@@ -28,15 +28,16 @@ import {
 // this takes a map, and switches the key and value and returns a new map
 const transposeValueAndKeyFromMap = (m) => {
     let r = new Map();
-    m.forEach((v, k) => r.set(m.get(k), k));
+    m.forEach((_, k) => r.set(m.get(k), k));
     return r;
 }
 
 // this method takes a normilization map for the API keys that use different cases
 // it replaces the keys with the preferred version depending on incoming or out going.
-
-// fix this output - currently making arrays for strings etc
-
+// const caseConversion = new Map(); //.set(API Key, SDK Key)
+// caseConversion.set('network-code', 'networkCode');
+// opts['caseConversion'] = caseConversion
+// let input = normalize(params, caseConversion);
 export const normalize = (obj, caseMap, reverse = true) => {
     let ret = obj;
     if (reverse) caseMap = transposeValueAndKeyFromMap(caseMap);
