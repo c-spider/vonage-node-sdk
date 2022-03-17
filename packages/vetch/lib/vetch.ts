@@ -14,6 +14,7 @@
 import fetch, { Response as fetchResponse } from 'node-fetch'
 import { stringify } from 'querystring'
 import merge from 'lodash.merge'
+import isPlainObject from 'lodash.isplainobject'
 
 import {
     VetchError,
@@ -22,6 +23,42 @@ import {
     ResponseTypes,
     Headers,
 } from './types'
+
+
+// this takes a map, and switches the key and value and returns a new map
+const transposeValueAndKeyFromMap = (m) => {
+    let r = new Map();
+    m.forEach((v, k) => r.set(m.get(k), k));
+    return r;
+}
+
+// this method takes a normilization map for the API keys that use different cases
+// it replaces the keys with the preferred version depending on incoming or out going.
+
+// fix this output - currently making arrays for strings etc
+
+export const normalize = (obj, caseMap, reverse = true) => {
+    let ret = obj;
+    if (reverse) caseMap = transposeValueAndKeyFromMap(caseMap);
+    if (Array.isArray(obj)) {
+        ret = [];
+        let i = 0;
+        while (i < obj.length) {
+            ret.push(normalize(obj[i], caseMap));
+            ++i;
+        }
+    } else if (isPlainObject(obj)) {
+        ret = {};
+
+        for (const k in obj) {
+
+            ret[caseMap.get(k) || k] = normalize(obj[k], caseMap);
+
+        }
+    }
+    return ret;
+}
+
 
 export class Vetch {
     defaults: VetchOptions
@@ -64,13 +101,18 @@ export class Vetch {
     ): Promise<any> {
         switch (opts.responseType) {
             case 'json': {
-                let data = await res.text()
+                let data = await res.text();
                 try {
                     data = JSON.parse(data)
+
+                    if (opts.caseConversion) {
+                        data = normalize(data, opts.caseConversion, false)
+                    }
+
                 } catch {
-                    // continue
+
                 }
-                return data as {}
+                return data
             }
             default:
                 return res.text()
@@ -79,7 +121,6 @@ export class Vetch {
 
     private validateOpts(options: VetchOptions): VetchOptions {
         const opts = merge({}, this.defaults, options)
-
         opts.headers = opts.headers || {}
         opts.checkStatus = this.checkStatus
         opts.responseType = opts.responseType
@@ -89,12 +130,19 @@ export class Vetch {
         }
 
         const baseUrl = opts.baseUrl || opts.baseURL
+
         if (baseUrl) {
             opts.url = baseUrl + opts.url
         }
 
         if (opts.params) {
+
+            // if (opts.caseConversion) {
+            //     opts.params = normalize(opts.params, opts.caseConversion, true)
+            // }
+
             let queryParams = stringify(opts.params)
+
             if (queryParams.startsWith('?')) {
                 queryParams = queryParams.slice(1)
             }
@@ -104,6 +152,12 @@ export class Vetch {
         }
 
         if (opts.data) {
+
+            // if (opts.caseConversion) {
+            //     opts.data = normalize(opts.data, opts.caseConversion, true)
+
+            // };
+
             if (typeof opts.data === 'object') {
                 opts.body = JSON.stringify(opts.data)
                 opts.headers['Content-Type'] = 'application/json'
@@ -133,7 +187,6 @@ export class Vetch {
         res.headers.forEach((value, key) => {
             headers[key] = value
         })
-
 
         return {
             config: opts,

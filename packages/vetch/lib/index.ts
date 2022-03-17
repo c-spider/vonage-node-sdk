@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import { VetchOptions } from './types'
-import { Vetch } from './vetch'
+import { Vetch, normalize } from './vetch'
 
 export {
   VetchError,
@@ -20,10 +20,11 @@ export {
   VetchResponse,
   Headers,
   RetryConfig,
-  ResponseTypes
+  ResponseTypes,
+  HTTPMethods
 } from './types'
 
-export { Vetch, VetchOptions }
+export { Vetch, VetchOptions, normalize }
 
 export const instance = new Vetch()
 

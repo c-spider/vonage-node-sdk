@@ -21,8 +21,6 @@ export interface VetchHttpRequest {
 export type VetchPromise<T> = Promise<VetchResponse<T>>
 export const VetchPromise = Promise;
 
-export type NumbersResponse<T> = VetchResponse<T>
-
 export interface VetchResponse<T> {
     config: VetchOptions
     data: T
@@ -64,7 +62,8 @@ export interface VetchOptions {
     params?: any
     responseType?: ResponseTypes
     checkStatus?: (status: number) => boolean
-    size?: number
+    size?: number,
+    caseConversion?: Map<string, string>;
 }
 
 export interface RetryConfig { }
