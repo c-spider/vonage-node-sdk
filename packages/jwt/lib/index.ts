@@ -1,10 +1,10 @@
 import { JWT } from './jwt'
-import { GeneratorOptions } from './common'
+export { GeneratorOptions, Claims, ACL, Token, JWTInterface } from './types'
 
 export { JWT }
 
 let instance = new JWT()
 
-export function tokenGenerate<T>(applicationId: string, privateKey: string | Buffer, opts?: GeneratorOptions) {
+export function tokenGenerate(applicationId, privateKey, opts?) {
     return instance.tokenGenerate(applicationId, privateKey, opts)
 }

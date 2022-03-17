@@ -1,6 +1,13 @@
 export interface Token {
     config: GeneratorOptions
     token: string
+    //refresh() => new token
+}
+
+export interface ACL {
+    paths?: {
+        [key: string]: any
+    }
 }
 
 export interface GeneratorOptions {
@@ -9,7 +16,7 @@ export interface GeneratorOptions {
     subject?: string
     jti?: string
     notBefore?: number
-    acl?: any
+    claims?: Claims
 }
 
 export interface Claims {
@@ -17,7 +24,7 @@ export interface Claims {
     sub?: string
     jti?: string
     nbf?: number
-    acl?: object
+    acl?: ACL
     iat?: number
     application_id?: string
 }
@@ -27,5 +34,5 @@ export interface JWTInterface {
         applicationId: string,
         privateKey: string | Buffer,
         opts?: GeneratorOptions
-    ): void
+    ): Token
 }

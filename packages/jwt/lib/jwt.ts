@@ -1,13 +1,13 @@
-import { JWTInterface, GeneratorOptions, Claims } from './common'
+import { JWTInterface, GeneratorOptions, Claims, Token } from './types'
 import { sign } from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 
-export class JWT implements JWTInterface{
-    tokenGenerate<T>(
+export class JWT implements JWTInterface {
+    tokenGenerate(
         applicationId: string,
         privateKey: string | Buffer,
         opts?: GeneratorOptions
-    ): string {
+    ): Token {
         if (!applicationId || !privateKey)
             throw new Error('Missing applicationId or privateKey')
 
@@ -21,7 +21,7 @@ export class JWT implements JWTInterface{
 
         let claims = this.validateOptions(opts)
         claims.application_id = applicationId
-        
+
         return sign(claims, privateKey, {
             algorithm: 'RS256',
             header: { typ: 'JWT' },
@@ -41,8 +41,8 @@ export class JWT implements JWTInterface{
             claims.sub = opts.subject
         }
 
-        if (opts?.acl) {
-            claims.acl = opts.acl
+        if (opts?.claims?.acl) {
+            claims.acl = opts.claims.acl
         }
 
         return claims
