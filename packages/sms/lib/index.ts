@@ -9,7 +9,6 @@ export {
     DeliveryReceipt,
     ErrorMessage,
     ErrorXml,
-    InboundMessage,
     Message,
     ModelError,
     SMSParams,
