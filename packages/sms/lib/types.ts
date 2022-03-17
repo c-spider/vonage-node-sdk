@@ -51,25 +51,6 @@ export interface ErrorXml {
     messages?: Array<ErrorMessage>;
 }
 
-export interface InboundMessage {
-    apiKey: string;
-    msisdn: string;
-    to: string;
-    messageId: string;
-    text: string;
-    type: string;
-    keyword: string;
-    messageTimestamp: string;
-    timestamp?: string;
-    nonce?: string;
-    concat?: string;
-    concatRef?: string;
-    concatTotal?: string;
-    concatPart?: string;
-    data?: Blob;
-    udh?: string;
-}
-
 export interface Message {
     to?: string;
     messageId?: string;
