@@ -1,18 +1,18 @@
 import { createHash, createHmac } from 'crypto';
-import { AuthConstructor, AuthInterface, AuthOpts, AuthQueryParams, SignedHashParams, AuthSignedParams, AlgorithmTypes } from './types'
+import { AuthConstructor, AuthInterface, AuthOpts, AuthQueryParams, SignedHashParams, AuthSignedParams, AlgorithmTypes, ApplicationDetails } from './types'
+import { tokenGenerate, GeneratorOptions, Token } from '@vonage/jwt';
 
 export const Auth: AuthConstructor = class Auth implements AuthInterface {
 
   apiKey: string
   apiSecret: string
   signature: SignedHashParams
+  app: ApplicationDetails
   constructor(opts?: AuthOpts) {
-    // add additional methods to find auth
-    // also needs to handle private key, etc
-
     this.apiKey = opts?.apiKey || ''
     this.apiSecret = opts?.apiSecret || ''
     this.signature = opts?.signature || null
+    this.app = opts?.app || null
   }
 
   getQueryParams = <T>(params: T): AuthQueryParams & T => {
@@ -69,19 +69,8 @@ export const Auth: AuthConstructor = class Auth implements AuthInterface {
 
     return returnParams;
   }
-}
 
+  generateJWT = (opts: GeneratorOptions): Token => tokenGenerate(this.app.application_id, this.app.privateKey, opts);
 
-
-// loop through ordered data keys here,
-
-// keys.on('readable', () => {
-//   // Only one element is going to be produced by the
-//   // hash stream.
-//   const data = input.read();
-//   if (data)
-//     hash.update(data);
-//   else {
-//     console.log(`${hash.digest('hex')} ${filename}`);
-//   }
-// });
+  generateBasicAuth = (): string => Buffer.from(`${this.apiKey}:${this.apiSecret}`).toString('base64')
+};
