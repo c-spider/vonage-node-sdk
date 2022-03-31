@@ -50,10 +50,6 @@ export interface NumbersUpdateParams {
     voiceCallbackType?: VoiceCallbackTypeEnum;
     voiceCallbackValue?: string;
     voiceStatusCallback?: string;
-    /** @deprecated */
-    messagesCallbackType?: MessagesCallbackTypeEnum;
-    /** @deprecated */
-    messagesCallbackValue?: string;
 }
 
 export enum VoiceCallbackTypeEnum {
